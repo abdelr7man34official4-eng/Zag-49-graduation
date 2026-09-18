@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<!--
+  =====================================================================
+   موقع دفعة 49 - كلية الصيدلة - جامعة الزقازيق
+  =====================================================================
+   الملفات:
+   - index.html         : هذا الملف (هيكل الصفحة)
+   - css/style.css       : كل الألوان والأشكال والتصميم
+   - js/script.js        : العداد التنازلي + الأنيميشن + معرض الصور
+   - images/logo.png     : شعار الدفعة (لازم تحطه بنفس الاسم ده بالظبط)
+   - images/students/    : صور الطلاب اللي هتظهر في قسم "ذكرياتنا"
+   - fonts/              : الخط الرسمي بتاع الدفعة
+
+   لو عايز تعرف تعدل أي حاجة، اقرا ملف README.md اللي جنب الملف ده،
+   فيه شرح خطوة بخطوة بالعربي لكل حاجة ممكن تحتاج تغيرها.
+  =====================================================================
+-->
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>دفعة 49 | كلية الصيدلة - جامعة الزقازيق</title>
+  <meta name="description" content="الموقع الرسمي لدفعة 49 - كلية الصيدلة - جامعة الزقازيق. العداد التنازلي للتخرج وذكرياتنا سوا." />
+
+  <!-- أيقونة الموقع اللي بتظهر في التاب بتاع المتصفح، هي نفسها اللوجو -->
+  <link rel="icon" type="image/png" href="images/logo.png" />
+
+  <!--
+    الخط المستخدم في الموقع موجود داخل المشروع نفسه، عشان يشتغل مباشرة على GitHub Pages.
+    الخط الرسمي بتاعكم، بيتحمل تلقائي من الإنترنت وميحتاجش رفع ملفات.
+    الخط المرفوع داخل فولدر fonts هو الخط الأساسي لكل الموقع
+    (اقرا ملاحظة الخط في README.md).
+  -->
+<link rel="stylesheet" href="css/style.css" />
+
+  <!--
+    الكود الصغير ده بيشتغل قبل ما الصفحة تتعرض، عشان لو الزائر
+    كان مختار الدارك مود قبل كده، الموقع يفتح دارك من أول لحظة
+    من غير "فلاش" أبيض قبل ما يتحول.
+  -->
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('site-theme');
+        if (savedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- =================================================================
+       الأغنية: بتشتغل تلقائي أول ما الموقع يفتح
+       عشان تضيف أغنيتك: حط ملف الصوت جوه فولدر audio باسم song.mp3
+       (لو عايز تغيّر الاسم أو الصيغة، غيّر مسار src هنا تحت)
+       ================================================================= -->
+  <audio id="bg-music" src="audio/song.mp3" loop preload="auto"></audio>
+
+  <!-- =================================================================
+       أزرار التحكم العائمة: زرار الأغنية وزرار الاحتفال
+       ================================================================= -->
+  <div class="floating-controls" id="floating-controls">
+    <button id="music-toggle" class="floating-btn" type="button" aria-pressed="false" aria-label="تشغيل/إيقاف الأغنية" title="الأغنية">
+      <span class="floating-btn-icon" id="music-icon">🎵</span>
+    </button>
+    <button id="celebration-toggle" class="floating-btn" type="button" aria-pressed="false" aria-label="تشغيل/إيقاف الاحتفال" title="الاحتفال">
+      <span class="floating-btn-icon" id="celebration-icon">🎉</span>
+    </button>
+  </div>
+
+  <!-- =================================================================
+       كونفيتي عائم فوق الموقع كله: بيشتغل بزرار الاحتفال في أي وقت
+       (شفاف، مبيقفلش الموقع، مجرد كونفيتي بينزل فوق أي قسم انت فيه)
+       ================================================================= -->
+  <canvas id="site-confetti-canvas" aria-hidden="true"></canvas>
+
+  <!-- =================================================================
+       شاشة الاحتفال: أول حاجة بتظهر لما حد يفتح الموقع
+       (كونفيتي + شعار الدفعة + اسمها) وبعدها تختفي لوحدها
+       ================================================================= -->
+  <div id="celebration-screen" aria-hidden="true">
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="celebration-content">
+      <img src="images/logo.png" alt="شعار دفعة 49" class="celebration-logo" />
+      <p class="celebration-caption">مبروك التخرج يا احلي دفعة في الدنيا </p>
+      <h1 class="celebration-title">٤٩</h1>
+    </div>
+
+    <!-- زرار تخطي الأنيميشن لمن يفضّل عدم انتظارها -->
+    <button id="skip-celebration" type="button">تخطي ⏭</button>
+  </div>
+
+  <!-- =================================================================
+       الهيدر: شريط التنقل الثابت أعلى الصفحة
+       ================================================================= -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="#hero" class="brand">
+          <img src="images/logo.png" alt="شعار دفعة 49" class="brand-logo" />
+          <span class="brand-text">دفعة 49</span>
+        </a>
+
+        <!-- زرار الدارك مود: بيبدل شكل الموقع بين فاتح وغامق ويحفظ اختيار الزائر -->
+        <button
+          id="theme-toggle"
+          class="theme-toggle"
+          type="button"
+          aria-pressed="false"
+          aria-label="تفعيل الوضع الداكن"
+          title="الوضع الداكن"
+        >
+          <span class="theme-toggle-icon" id="theme-toggle-icon">🌙</span>
+          <span class="sr-only" id="theme-toggle-text">تفعيل الوضع الداكن</span>
+        </button>
+      </div>
+
+      <button id="nav-toggle" class="nav-toggle" aria-label="فتح القائمة" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav">
+        <a href="#hero">الرئيسية</a>
+        <a href="#about">عن الدفعة</a>
+        <a href="#countdown">العداد التنازلي</a>
+        <a href="#doctors">دكاترة مميزين</a>
+        <a href="#gallery">ذكرياتنا</a>
+        <a href="#footer">تواصل</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- =================================================================
+         قسم البداية (Hero)
+         ================================================================= -->
+    <section id="hero" class="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-content reveal">
+        <img src="images/logo.png" alt="شعار دفعة 49" class="hero-logo" />
+        <p class="hero-eyebrow">كلية الصيدلة &mdash; جامعة الزقازيق</p>
+        <h1 class="hero-title">دفعة <span>49</span></h1>
+        <p class="hero-tagline">العب في الطينة و اتبسط </p>
+        <a href="#countdown" class="hero-cta">شوف العداد التنازلي ↓</a>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         قسم "عن الدفعة"
+         ================================================================= -->
+    <section id="about" class="about">
+      <div class="section-inner reveal">
+        <span class="section-eyebrow">حكايتنا</span>
+        <h2 class="section-title">دفعة 49</h2>
+        <p class="about-text">
+          
+لو حد سألنا عن دفعتنا، يمكن أول حاجة هتيجي في بالنا هي الخناقات. إحنا حرفيًا كنا بنصحى نشوف الخناقة عن ايه النهارده؟ على محاضرة، على ميعاد، على قرار، على جروب، على امتحان، على أي حاجة ممكن تتخيلها وممكن كمان حاجات محدش كان متخيل إنها تستاهل خناقة أصلًا.  وكأن الخناق كان جزء أساسي من الروتين بتاعنا. وخناقة تجيب التانية وحوارات كنا فاكرينها مبتخلصش لكن خلصت، وكل مرة كنا بنقول: "خلاص يا جماعة المرة دي كبرنا وهنهدى." وطبعًا… مكناش بنهدى.
+ومن الحاجات اللي مش هننساها هي رسايل الـ Admins بتوع الدفعة، "ورنا" تحديدًا ورسالتها الشهيرة اللي بمجرد ما تظهر في الجروب كنا بنعرف إن في مصيبة جاية: "الدكاترة زعلانة مننا." الجملة دي لوحدها كانت كفيلة إنها تخلينا نسكت... خمس دقايق وبعدها نرجع نتخانق تاني.  الدكاترة اتعصبوا مننا، زعلوا مننا، وزعلونا في الامتحانات...وإحنا كمان اتضغطنا واتخانقنا وزعلنا من بعض… وفي لحظات كتير حسينا إننا مش هنكمل.
+خمس سنين مش قليلين. خمس سنين مليانين امتحانات، ومذاكرة، وسهر، وضغط، وقلق، ودرجات، ونتائج ومواقف كتير عدت علينا وقهوة وشاي كتير طبعا… وفيه ناس قربت مننا، وناس بعدت، وناس اتغيرت، وناس فضلوا موجودين لحد آخر خطوة هونوا علينا الرحلة بوجودهم. إحنا مكناش أكتر دفعة هادية، ولا أكتر دفعة اتفقت على حاجة، ولا حتى أكتر دفعة الدكاترة كانوا بيحبوها. لكننا كنا دفعة واحدة. عشنا كل ده مع بعض للآخر. والنهارده، بعد كل الخناقات، وكل المشاكل، وكل مرة قولنا فيها "جبنا آخرنا مش هنكمل"… قدرنا نوصل. خلصنا الخمس سنين. قد ايه كنا بنتمنى الأيام دي تخلص، دلوقتي وإحنا واقفين على آخرها، نفس الأيام اللي كنا بنشتكي منها بقت ذكريات. هنفتقد الخناقات، هنفتقد الجروب، هنفتقد هزارنا، هنفتقد الناس اللي كانت حوالينا على مدار السنين وقضينا معاهم وقت الفترة دي اكتر من أهلنا تقريبا. في الآخر، دفعتنا أكيد مكنتش مثالية والرحلة مكنتش سهلة، بس إحنا كملناها للآخر. خمس سنين بكل لحظاتها الحلوة والمُرة عدت. والحقيقة اللي محدش يقدر يغيرها إن احنا بس اللي عارفين قد ايه تعبنا… اتخانقنا… وقعنا… قمنا… وكملنا عشان نوصل لهنا.
+دفعة مش هتتكرر…وغالبا الدكاترة كمان مش عاوزينها تتكرر
+. ❤️
+
+          <br /><br />
+                  </p>
+
+        <!-- شارات بسيطة تقدر تغيرها أو تحذفها -->
+        <div class="about-badges">
+          <div class="badge">
+            <span class="badge-number">27</span>
+            <span class="badge-label">كود الدفعة</span>
+          </div>
+          <div class="badge">
+            <span class="badge-number">ZAG</span>
+            <span class="badge-label">جامعة الزقازيق</span>
+          </div>
+          <div class="badge">
+            <span class="badge-number">49</span>
+            <span class="badge-label">رقم الدفعة</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         قسم العداد التنازلي
+         ================================================================= -->
+    <section id="countdown" class="countdown-section">
+      <div class="section-inner reveal">
+        <span class="section-eyebrow">لسه باقي</span>
+        <h2 class="section-title">العد التنازلي ليوم التخرج</h2>
+
+        <!--
+          الأرقام دي بتتظبط لوحدها من ملف js/script.js
+          (ابحث عن GRADUATION_DATE في أول الملف وغيّر التاريخ زي ما انت عايز)
+        -->
+        <div class="countdown" id="countdown-widget">
+          <div class="countdown-box">
+            <span class="countdown-number" id="cd-days">00</span>
+            <span class="countdown-label">يوم</span>
+          </div>
+          <div class="countdown-box">
+            <span class="countdown-number" id="cd-hours">00</span>
+            <span class="countdown-label">ساعة</span>
+          </div>
+          <div class="countdown-box">
+            <span class="countdown-number" id="cd-minutes">00</span>
+            <span class="countdown-label">دقيقة</span>
+          </div>
+          <div class="countdown-box">
+            <span class="countdown-number" id="cd-seconds">00</span>
+            <span class="countdown-label">ثانية</span>
+          </div>
+        </div>
+
+        <p id="countdown-finished-msg" class="countdown-finished">🎓 مبروك التخرج يا دفعة 49! 🎓</p>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         قسم دكاترة مميزين
+         ================================================================= -->
+    <section id="doctors" class="doctors">
+      <div class="section-inner reveal">
+        <span class="section-eyebrow">قدوتنا</span>
+        <h2 class="section-title">دكاترة مميزين</h2>
+        <p class="doctors-intro">
+"لدكاترتنا اللي كانوا دايمًا جزء مهم من رحلتنا، شكرًا على كل علم علمتوهولنا، وكل نصيحة قدمتوها، وكل موقف ساعدتونا فيه. وجودكم في رحلتنا كان فارق، وأثرُكم هيفضل معانا في كل خطوة جاية. شكرًا من القلب على كل حاجة قدمتوها لينا، وربنا يجازيكم عنا كل خير."        
+        </p>
+
+        <!--
+          مهم:
+          الدكاترة بيتضافوا من مصفوفة "doctors" في js/script.js،
+          بنفس فكرة أفراد الدفعة. المثال الموجود هناك هو مجرد نموذج
+          عشان تعرف شكل البيانات اللي تضيفها.
+        -->
+        <div class="doctors-grid" id="doctors-grid">
+          <!-- سيتم ملء الكروت تلقائياً بواسطة script.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         قسم معرض الذكريات (صور الطلاب)
+         ================================================================= -->
+    <section id="gallery" class="gallery">
+      <div class="section-inner reveal">
+        <span class="section-eyebrow">ذكرياتنا</span>
+        <h2 class="section-title">أفراد الدفعة</h2>
+        <p class="gallery-hint">
+         
+        </p>
+
+        <!-- Find Your Name: البحث عن اسمك قبل كروت أفراد الدفعة -->
+        <div class="find-name" id="find-name">
+          <div class="find-name-head">
+            <span class="find-name-kicker">FIND YOUR NAME</span>
+            <h3>Find yourself  <span></span></h3>
+            <p>اكتب اسمك وشوف كارتك وسط الدفعة في لحظة.</p>
+          </div>
+
+          <form class="find-name-form" id="find-name-form" role="search">
+            <div class="find-name-input-wrap">
+              <span class="find-name-search-icon" aria-hidden="true">⌕</span>
+              <input
+                id="student-search"
+                class="find-name-input"
+                type="search"
+                autocomplete="off"
+                placeholder="اكتب اسمك هنا..."
+                aria-label="ابحث عن اسمك في دفعة 27"
+              />
+              <button type="button" id="clear-student-search" class="find-name-clear" aria-label="مسح البحث" hidden>×</button>
+            </div>
+            <button class="find-name-button" type="submit">ابحث عني <span>→</span></button>
+          </form>
+
+          <div id="student-search-status" class="student-search-status" aria-live="polite"></div>
+          <div id="student-search-result" class="student-search-result" aria-live="polite"></div>
+        </div>
+
+        <!--
+          مهم جداً: مش هنكتب الصور يدوي هنا في الـ HTML.
+          الصور بتتولد تلقائي بالجافاسكريبت جوه العنصر ده،
+          عشان تضيف صورة جديدة تحتاج بس تضيف سطر واحد في الأرايه
+          "students" في js/script.js، ومش هتلمس الملف ده خالص.
+        -->
+        <div class="gallery-grid" id="gallery-grid">
+          <!-- سيتم ملء الصور هنا تلقائياً بواسطة script.js -->
+        </div>
+
+        <!-- ترقيم الصفحات: يظهر تلقائياً لو عدد الصور أكبر من صفحة واحدة -->
+        <div class="gallery-pagination" id="gallery-pagination" aria-label="ترقيم صفحات الصور"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =================================================================
+       الفوتر
+       ================================================================= -->
+  <footer id="footer" class="site-footer">
+    <div class="footer-pharmacy-pattern" aria-hidden="true"></div>
+    <div class="footer-content">
+      <img src="images/logo.png" alt="شعار دفعة 49" class="footer-logo" />
+      <p class="footer-title">دفعة 49 - كلية الصيدلة - جامعة الزقازيق</p>
+
+      <div class="footer-socials" aria-label="روابط التواصل الاجتماعي">
+        <a
+          class="footer-social footer-whatsapp"
+          href="https://wa.me/201090816433"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="تواصل معنا على واتساب"
+          title="WhatsApp"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20.52 3.48A11.87 11.87 0 0 0 12.06 0C5.5 0 .16 5.34.16 11.9c0 2.1.55 4.15 1.6 5.97L.05 24l6.27-1.64a11.88 11.88 0 0 0 5.74 1.47h.01c6.56 0 11.9-5.34 11.9-11.9 0-3.18-1.24-6.17-3.45-8.45Zm-8.46 18.3h-.01a9.86 9.86 0 0 1-5.03-1.38l-.36-.21-3.72.98.99-3.63-.23-.37a9.87 9.87 0 1 1 8.36 4.61Zm5.42-7.4c-.3-.15-1.78-.88-2.06-.98-.28-.1-.48-.15-.69.15-.2.3-.79.98-.97 1.18-.18.2-.36.23-.66.08-.3-.15-1.25-.46-2.38-1.46-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.36.45-.53.15-.18.2-.3.3-.5.1-.2.05-.38-.03-.53-.08-.15-.69-1.66-.94-2.27-.25-.6-.5-.52-.69-.53h-.58c-.2 0-.53.08-.81.38-.28.3-1.06 1.04-1.06 2.54s1.09 2.95 1.24 3.15c.15.2 2.14 3.27 5.18 4.58.72.31 1.28.5 1.72.64.72.23 1.38.2 1.9.12.58-.09 1.78-.73 2.03-1.43.25-.7.25-1.3.18-1.43-.08-.13-.28-.2-.58-.35Z"/>
+          </svg>
+        </a>
+
+        <a
+          class="footer-social footer-facebook"
+          href="https://www.facebook.com/abdelrhman.ehab.127"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="صفحة فيسبوك"
+          title="Facebook"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M13.5 21v-8h2.7l.4-3h-3.1V8.08c0-.87.24-1.46 1.5-1.46h1.7V3.94c-.3-.04-1.33-.13-2.54-.13-2.51 0-4.23 1.53-4.23 4.34V10H7.1v3h2.83v8h3.57Z"/>
+          </svg>
+        </a>
+
+        <a
+          class="footer-social footer-instagram"
+          href="https://www.instagram.com/art_abdelrhman"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="حساب إنستجرام"
+          title="Instagram"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
+            <circle cx="12" cy="12" r="4.2"></circle>
+            <circle cx="17.4" cy="6.7" r="1.1" class="instagram-dot"></circle>
+          </svg>
+        </a>
+      </div>
+
+      <p class="footer-sub">صُنع بواسطة عبدالرحمن ايهاب  </p>
+      <p class="footer-copy">© <span id="footer-year"></span> دفعة 49. كل الحقوق محفوظة.</p>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
