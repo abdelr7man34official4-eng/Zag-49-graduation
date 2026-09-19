@@ -497,6 +497,7 @@ const students = [
   { name: 'Mohamed khairy elsayed', photo: 'images/students/Mohamed khairy elsayed_.png' },
   { name: 'Mohamed younis', photo: 'images/students/Mohamed younis.jpg' },
   { name: 'Mohammed Elsafty', photo: 'images/students/Mohammed Elsafty.png' },
+  { name: 'Tarek Elsaeed', photo: 'images/students/Tarek Elsaeed.jpg' },
   { name: 'Mona Khalil', photo: 'images/students/Mona Khalil_.jpg' },
   { name: 'Nada Radwan', photo: 'images/students/Nada Radwan.jpg' },
   { name: 'Nakaa Mahmoud', photo: 'images/students/Nakaa Mahmoud_.png' },
@@ -533,7 +534,7 @@ const students = [
   { name: 'Shorouk Salah', photo: 'images/students/Shorouk Salah.png' },
   { name: 'Mariam mohamed', photo: 'images/students/Mariam mohamed.png' },
   { name: 'Eslam Mohamed', photo: 'images/students/Eslam Mohamed1.png' },
-  { name: 'Ahmed Mohamed', photo: 'images/students/Ahmed Mohamed.png' },
+  { name: 'Ahmed Mohamed', photo: 'images/students/Ahmed Mohamed3.jpg' },
   { name: 'Ahmed Mohamed', photo: 'images/students/Ahmed Mohamed11111111.jpg' },
   { name: 'NouRan Magdy', photo: 'images/students/NouRan Magdy.png' },
   { name: 'Reham Shehata', photo: 'images/students/Reham Shehata.png' },
@@ -548,12 +549,14 @@ const students = [
   { name: 'Amany Ali', photo: 'images/students/Amany Ali.jpg' },
   { name: 'Asmaa Mohammed Ali', photo: 'images/students/Asmaa Mohammed Ali.jpg' },
   
+ 
+  
 
   
   
   {
      name: 'احمد السيد سلامة',
-     photo: 'images/students/photo-name.jpg',
+     photo: 'images/students/احمد السيد سلامة.png',
      memorial: true,
      memorialText: 'رحمه الله',
      memorialDua: 'اللهم اغفر له وارحمه وأسكنه فسيح جناتك',
