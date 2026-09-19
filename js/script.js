@@ -321,6 +321,33 @@ const countdownInterval = setInterval(updateCountdown, 1000);
 })();
 
 /* -------------------------------------------------------------------------
+   3.1) دالة مساعدة لعمل كارت "في ذكرى" بسرعة (مكتوبة الاسم بس)
+   -------------------------------------------------------------------------
+   عشان متكتبش كل مرة photo وmemorial وmemorialText وmemorialDua يدوي،
+   الدالة دي بتعمل كل ده تلقائياً وانت بس بتكتب الاسم.
+   بتفترض إن اسم ملف الصورة هو نفس اسم الطالب + .jpg
+   (يعني لو الاسم 'Ahmed Ali' هتدور على images/students/Ahmed Ali.jpg)
+
+   استخدامها جوه مصفوفة students تحت كده:
+   memorialCard('اسم الطالب هنا'),
+
+   ولو صورته امتدادها png مش jpg، أو عايز نص/دعاء مختلف، مرر باراميتر تاني:
+   memorialCard('اسم الطالب هنا', { photo: 'images/students/اسمه.png' }),
+   memorialCard('اسم الطالب هنا', { memorialText: 'في ذكراه الطيبة' }),
+   memorialCard('اسم الطالب هنا', { memorialDua: 'اللهم اغفر له وارحمه' }),
+   ------------------------------------------------------------------------- */
+function memorialCard(name, options = {}) {
+  return {
+    name,
+    photo: options.photo || `images/students/${name}.jpg`,
+    memorial: true,
+    memorialText: options.memorialText || 'رحمه الله',
+    memorialDua: options.memorialDua
+      || 'اللهم اغفر له وارحمه، وأسكنه فسيح جناتك، واجعل قبره روضة من رياض الجنة',
+  };
+}
+
+/* -------------------------------------------------------------------------
    4) معرض الذكريات: قائمة الطلاب (صورة + اسم فقط)
    =========================================================================
    عشان تضيف طالب جديد:
@@ -342,6 +369,21 @@ const students = [
   // { name: 'اسم الشخص', photo: 'images/students/photo.jpg', badge: 'LEADER' },
   //
   // لو لا تريد أي كلمة، لا تكتب badge أصلاً.
+  // -------------------------------------------------------------------------
+
+  // -------------------------------------------------------------------------
+  // 🕊️ كارت "في ذكرى" لطالب متوفى (رحمه الله) — أسهل طريقة (بس الاسم):
+  // امسح // من أول السطر تحت واكتب مكانها اسم الطالب فعلاً:
+  //
+  // memorialCard('اسم الطالب هنا'),
+  //
+  // كده بس! هيدور تلقائياً على صورته في images/students/اسم الطالب.jpg
+  // ويحط عليه ستايل "في ذكرى" (صورة أبيض وأسود + شريط In Loving Memory)
+  // ولما حد يدوس على كارته هيتقلب ويظهر الدعاء الافتراضي في ضهره.
+  //
+  // لو عايز تتحكم في الصورة/النص/الدعاء بنفسك بدل الافتراضي، شوف شرح
+  // الدالة memorialCard() فوق (قسم 3.1)، أو اكتب الكارت بشكل كامل يدوي:
+   
   // -------------------------------------------------------------------------
   { name: 'Abdelrhman Ehab', photo: 'images/students/Abdelrhman Ehab.png', badge: 'Creator' },
   { name: 'Mohamed khaled', photo: 'images/students/Mohamed Khaled.jpg', badge: '' },
@@ -407,6 +449,7 @@ const students = [
   { name: 'Ahmed El-Shawadfi', photo: 'images/students/Ahmed El-Shawadfi.jpg' },
   { name: 'Ahmed Elhemaly', photo: 'images/students/Ahmed Elhemaly.png' },
   { name: 'Ahmed Mohamed', photo: 'images/students/Ahmed Mohamed.jpg' },
+  { name: 'Abdallah Ashraf', photo: 'images/students/Abdallah Ashraf.jpg' },
   { name: 'Ahmed elhady', photo: 'images/students/Ahmed elhady_.png' },
   { name: 'Amany Hany', photo: 'images/students/Amany Hany.jpg' },
   { name: 'Amira Ahmed', photo: 'images/students/Amira Ahmed.png' },
@@ -470,6 +513,7 @@ const students = [
   { name: 'Sgoud Yahya', photo: 'images/students/Sgoud Yahya.png' },
   { name: 'Shady Mohamed', photo: 'images/students/Shady Mohamed.png' },
   { name: 'Shahd Mohamed', photo: 'images/students/Shahd Mohamed.png' },
+  { name: 'George Sobhi', photo: 'images/students/George Sobhi.png' },
   { name: 'Shaza Ayman', photo: 'images/students/Shaza Ayman.jpg' },
   { name: 'Shehab Samir', photo: 'images/students/Shehab Samir_.png' },
   { name: 'Shimaa Mahmoud', photo: 'images/students/Shimaa Mahmoud_.png' },
@@ -495,12 +539,25 @@ const students = [
   { name: 'Reham Shehata', photo: 'images/students/Reham Shehata.png' },
   { name: 'Ahmed Abdelal', photo: 'images/students/Ahmed Abdelal.jpg' },
   { name: 'Mohamed Ashraf', photo: 'images/students/Mohamed Ashraf.png' },
+  { name: 'Mohamed Refaat', photo: 'images/students/Mohamed Refaat.jpg', badge: 'LEADER' },
+  { name: 'Ahmed Mohamed Ahmed', photo: 'images/students/Ahmed Mohamed Ahmed.png' },
+  { name: 'Marwan Ahmed', photo: 'images/students/Marwan Ahmed.jpg' },
   { name: 'Somaia elsayed', photo: 'images/students/Somaia elsayed.jpg' },
   { name: 'A’laa Ahmed', photo: 'images/students/A’laa Ahmed.jpg' },
-  { name: 'Abdallah Ashraf', photo: 'images/students/Abdallah Ashraf.jpg' },
-  { name: 'Marwan Ahmed', photo: 'images/students/Marwan Ahmed.jpg' },
+  { name: 'Samar Mohammed', photo: 'images/students/Samar Mohammed.jpg' },
+  { name: 'Amany Ali', photo: 'images/students/Amany Ali.jpg' },
+  { name: 'Asmaa Mohammed Ali', photo: 'images/students/Asmaa Mohammed Ali.jpg' },
+  
+
   
   
+  {
+     name: 'احمد السيد سلامة',
+     photo: 'images/students/photo-name.jpg',
+     memorial: true,
+     memorialText: 'رحمه الله',
+     memorialDua: 'اللهم اغفر له وارحمه وأسكنه فسيح جناتك',
+   },
 ];
 
 /* -------------------------------------------------------------------------
@@ -514,7 +571,39 @@ const GALLERY_PAGE_SIZE = 30;
 let currentGalleryPage = 1;
 
 function studentCardMarkup(student) {
-  const isVip = student.badge || student.vip;
+  const isMemorial = Boolean(student.memorial);
+  const isVip = !isMemorial && (student.badge || student.vip);
+
+  // كارت الطالب المتوفى بيتقلب لما تدوس عليه، فبنبني له تركيبة مختلفة
+  // (وش فيه صورته، وضهر فيه الدعاء) بدل الكارت العادي.
+  if (isMemorial) {
+    const dua = student.memorialDua || 'اللهم اغفر له وارحمه، وأسكنه فسيح جناتك، واجعل قبره روضة من رياض الجنة';
+    return `
+      <div class="student-card memorial-card" role="button" tabindex="0" aria-label="اضغط لعرض الدعاء لـ ${student.name}">
+        <div class="memorial-flip">
+          <div class="memorial-flip-front">
+            <div class="student-photo-wrap">
+              <span class="memorial-ribbon">In Loving Memory</span>
+              <img
+                src="${student.photo}"
+                alt="${student.name}"
+                loading="lazy"
+                onerror="this.onerror=null; this.src='images/students/default-avatar.svg';"
+              />
+            </div>
+            <div class="student-info">
+              <p class="student-name">${student.name}</p>
+              <span class="memorial-label">${student.memorialText || 'رحمه الله'}</span>
+            </div>
+            <span class="memorial-flip-hint">اضغط لعرض الدعاء 🕊️</span>
+          </div>
+          <div class="memorial-flip-back">
+            <p class="memorial-dua">${dua}</p>
+          </div>
+        </div>
+      </div>`;
+  }
+
   return `
       <div class="student-card${isVip ? ' vip-card' : ''}">
         <div class="student-photo-wrap">
@@ -593,6 +682,34 @@ function renderGallery() {
 renderGallery();
 
 /* -------------------------------------------------------------------------
+   4.1.1) قلب كارت "في ذكرى" عند الضغط عليه
+   -------------------------------------------------------------------------
+   بما إن الجريد بيتعاد رسمه (renderGallery) كل ما نغير صفحة، بنحط الـ
+   event listener مرة واحدة على الحاوية نفسها (gallery-grid) بدل كل كارت،
+   عشان يفضل شغال حتى بعد ما المحتوى يتغير.
+   ------------------------------------------------------------------------- */
+(function memorialCardFlip() {
+  const grid = document.getElementById('gallery-grid');
+  if (!grid) return;
+
+  const toggleFlip = (card) => card.classList.toggle('is-flipped');
+
+  grid.addEventListener('click', (event) => {
+    const card = event.target.closest('.memorial-card');
+    if (card) toggleFlip(card);
+  });
+
+  // عشان يبقى شغال كمان بلوحة المفاتيح (Enter أو مسطرة المسافة) للوصولية
+  grid.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    const card = event.target.closest('.memorial-card');
+    if (!card) return;
+    event.preventDefault();
+    toggleFlip(card);
+  });
+})();
+
+/* -------------------------------------------------------------------------
    4.2) Find Your Name
    -------------------------------------------------------------------------
    البحث سريع حتى لو المستخدم كتب الاسم بطريقة مختلفة شوية في المسافات
@@ -636,17 +753,20 @@ renderGallery();
   }
 
   function cardMarkup(student) {
-    const isVip = student.badge || student.vip;
+    const isMemorial = Boolean(student.memorial);
+    const isVip = !isMemorial && (student.badge || student.vip);
     return `
-      <article class="search-result-card${isVip ? ' vip-card' : ''}">
+      <article class="search-result-card${isVip ? ' vip-card' : ''}${isMemorial ? ' memorial-card' : ''}">
         <div class="search-result-photo">
           ${isVip ? `<span class="vip-ribbon">${escapeHtml(student.badge || 'VIP')}</span>` : ''}
+          ${isMemorial ? `<span class="memorial-ribbon">In Loving Memory</span>` : ''}
           <img src="${escapeHtml(student.photo)}" alt="${escapeHtml(student.name)}" onerror="this.onerror=null;this.src='images/students/default-avatar.svg';">
         </div>
         <div class="search-result-info">
           <span class="search-result-label">YOUR CARD</span>
           <h4>${escapeHtml(student.name)}</h4>
           ${isVip ? `<span class="vip-label">${escapeHtml(student.badge || 'VIP')}</span>` : ''}
+          ${isMemorial ? `<span class="memorial-label">${escapeHtml(student.memorialText || 'رحمه الله')}</span>` : ''}
         </div>
       </article>`;
   }

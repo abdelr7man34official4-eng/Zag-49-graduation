@@ -638,6 +638,59 @@ code {
 .vip-ribbon { position: absolute; top: 13px; right: 13px; z-index: 3; padding: 6px 10px; border: 1px solid rgba(74,50,0,.10); border-radius: 999px; color: #4a3200; background: linear-gradient(135deg, #b88716, #f7df83 48%, #c79a28); box-shadow: 0 8px 18px rgba(0,0,0,.14); font-size: .6rem; letter-spacing: 1px; }
 .vip-label { margin-top: 4px; color: var(--color-gold); font-family: var(--font-display); font-size: .64rem; font-weight: 900; letter-spacing: 2px; line-height: 1; }
 
+/* -------------------------------------------------------------------------
+   🕊️ كارت "في ذكرى" (Memorial Card) لطالب متوفى — رحمه الله
+   نفس شكل كارت الطالب العادي بالظبط، لكن بستايل مميز وهادئ:
+   صورة بالأبيض والأسود، إطار وشريط بلون فضي/أسود بدل الذهبي، وعبارة
+   تذكارية تحت الاسم بدل الـ badge.
+   ------------------------------------------------------------------------- */
+.memorial-card { border-color: rgba(90,90,100,.35); box-shadow: 0 12px 34px rgba(20,20,25,.10), 0 0 0 1px rgba(120,120,130,.08); }
+.memorial-card:hover { border-color: rgba(90,90,100,.55); box-shadow: 0 26px 58px rgba(20,20,25,.16); transform: translateY(-8px); }
+.memorial-card .student-photo-wrap img,
+.memorial-card .search-result-photo img { filter: grayscale(1) contrast(1.02); }
+.memorial-card:hover .student-photo-wrap img { transform: scale(1.045); filter: grayscale(1) contrast(1.05); }
+.memorial-ribbon { position: absolute; top: 13px; right: 13px; z-index: 3; padding: 6px 10px; border: 1px solid rgba(255,255,255,.15); border-radius: 999px; color: #f4f4f6; background: linear-gradient(135deg, #4b4b55, #7d7d8a 48%, #2c2c33); box-shadow: 0 8px 18px rgba(0,0,0,.22); font-size: .58rem; letter-spacing: .5px; }
+.memorial-label { margin-top: 4px; color: #5c5c66; font-family: var(--font-display); font-size: .64rem; font-weight: 900; letter-spacing: 1px; line-height: 1; }
+[data-theme="dark"] .memorial-label { color: #c7c7d1; }
+
+/* -------------------------------------------------------------------------
+   🔄 تأثير قلب كارت "في ذكرى" عند الضغط عليه
+   ------------------------------------------------------------------------- */
+.memorial-card { perspective: 1200px; cursor: pointer; }
+.memorial-flip {
+  position: relative;
+  width: 100%;
+  transition: transform .7s cubic-bezier(.4, .2, .2, 1);
+  transform-style: preserve-3d;
+}
+.memorial-card.is-flipped .memorial-flip { transform: rotateY(180deg); }
+.memorial-flip-front,
+.memorial-flip-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: inherit;
+}
+.memorial-flip-back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  background: linear-gradient(160deg, #34343d, #1c1c21);
+}
+.memorial-dua { color: #f1f1f4; font-family: var(--font-display); font-size: .92rem; line-height: 2; }
+.memorial-flip-hint {
+  display: block;
+  text-align: center;
+  padding: 0 12px 10px;
+  font-size: .58rem;
+  letter-spacing: .3px;
+  color: rgba(92, 92, 102, .7);
+}
+
 /* ------------------------------------------------------------------------
    Footer
    ------------------------------------------------------------------------ */
@@ -801,6 +854,7 @@ code {
   .student-info { min-height: 66px; padding: 11px 7px; }
   .student-name { font-size: .82rem; }
   .vip-ribbon { top: 9px; right: 9px; padding: 5px 8px; font-size: .55rem; }
+  .memorial-ribbon { top: 9px; right: 9px; padding: 5px 8px; font-size: .5rem; }
   .vip-label { font-size: .56rem; }
 
   .site-footer { padding-top: 62px; }
