@@ -18,6 +18,41 @@ const GRADUATION_DATE = new Date('2027-06-15T12:00:00');
 /* -------------------------------------------------------------------------
    2) العداد التنازلي
    ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+   عداد بأنيميشن "نتيجة بتتغير": أي وحدة (ثانية/دقيقة/ساعة/يوم) بتتحرك
+   بس لما قيمتها تتغير فعلاً، والأرقام بتلف لفة سريعة مع blur وارتداد.
+   ------------------------------------------------------------------------- */
+const COUNTDOWN_REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function setUnit(el, value) {
+  if (!el || el.dataset.v === value) return;
+  const old = el.dataset.v;
+  el.dataset.v = value;
+
+  const staticMarkup = (v) => [...v].map((c) => `<span class="dg"><span class="dg-s">${c}</span></span>`).join('');
+
+  if (old === undefined || COUNTDOWN_REDUCE) {
+    el.innerHTML = staticMarkup(value);
+    return;
+  }
+
+  const sameLen = old.length === value.length;
+  el.innerHTML = [...value].map((c, i) => {
+    if (sameLen && old[i] === c) return `<span class="dg"><span class="dg-s">${c}</span></span>`;
+    const prev = old[i] !== undefined ? old[i] : '';
+    const delay = Math.min(i, 3) * 45;
+    return `<span class="dg dg-roll" style="--dl:${delay}ms"><span class="dg-out">${prev}</span><span class="dg-in">${c}</span></span>`;
+  }).join('');
+
+  // نبضة ضوء على الكارت كله
+  const box = el.closest('.countdown-box');
+  if (box) {
+    box.classList.remove('pulse');
+    void box.offsetWidth;
+    box.classList.add('pulse');
+  }
+}
+
 function updateCountdown() {
   const now = new Date();
   const diff = GRADUATION_DATE - now;
@@ -45,10 +80,10 @@ function updateCountdown() {
   // نضيف صفر قبل الرقم لو أقل من 10 (مثال: 7 تبقى 07)
   const pad = (n) => String(n).padStart(2, '0');
 
-  if (daysEl) daysEl.textContent = pad(days);
-  if (hoursEl) hoursEl.textContent = pad(hours);
-  if (minutesEl) minutesEl.textContent = pad(minutes);
-  if (secondsEl) secondsEl.textContent = pad(seconds);
+  setUnit(daysEl, pad(days));
+  setUnit(hoursEl, pad(hours));
+  setUnit(minutesEl, pad(minutes));
+  setUnit(secondsEl, pad(seconds));
 }
 
 // نشغل العداد فوراً، وبعدين نحدثه كل ثانية
@@ -65,6 +100,12 @@ const countdownInterval = setInterval(updateCountdown, 1000);
   const skipBtn = document.getElementById('skip-celebration');
 
   if (!screen || !canvas) return;
+
+  // زيارة تانية في نفس الجلسة: نتخطى الشاشة فوراً
+  if (document.documentElement.classList.contains('no-intro')) {
+    screen.style.display = 'none';
+    return;
+  }
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -106,7 +147,7 @@ const countdownInterval = setInterval(updateCountdown, 1000);
 
   let animationFrame;
   const startTime = performance.now();
-  const DURATION = 3400; // مدة الأنيميشن بالمللي ثانية (3.4 ثانية) قبل ما تختفي الشاشة
+  const DURATION = 2600; // مدة الأنيميشن بالمللي ثانية (3.4 ثانية) قبل ما تختفي الشاشة
 
   function draw(time) {
     ctx.clearRect(0, 0, width, height);
@@ -238,7 +279,6 @@ const countdownInterval = setInterval(updateCountdown, 1000);
   function setButtonState(isActive) {
     celebrationBtn.setAttribute('aria-pressed', String(isActive));
     celebrationBtn.classList.toggle('is-active', isActive);
-    if (celebrationIcon) celebrationIcon.textContent = isActive ? '🛑' : '🎉';
   }
 
   function start() {
@@ -283,7 +323,6 @@ const countdownInterval = setInterval(updateCountdown, 1000);
   function setButtonState(isPlaying) {
     musicBtn.setAttribute('aria-pressed', String(isPlaying));
     musicBtn.classList.toggle('is-active', isPlaying);
-    if (musicIcon) musicIcon.textContent = isPlaying ? '🔊' : '🎵';
   }
 
   function playMusic() {
@@ -591,6 +630,7 @@ function studentCardMarkup(student) {
                 src="${student.photo}"
                 alt="${student.name}"
                 loading="lazy"
+                decoding="async"
                 onerror="this.onerror=null; this.src='images/students/default-avatar.svg';"
               />
             </div>
@@ -615,6 +655,7 @@ function studentCardMarkup(student) {
             src="${student.photo}"
             alt="${student.name}"
             loading="lazy"
+            decoding="async"
             onerror="this.onerror=null; this.src='images/students/default-avatar.svg';"
           />
         </div>
@@ -680,6 +721,7 @@ function renderGallery() {
   grid.innerHTML = pageStudents.map(studentCardMarkup).join('');
 
   renderPaginationControls(totalPages);
+  if (typeof window.__revealCards === 'function') window.__revealCards(grid);
 }
 
 renderGallery();
@@ -940,6 +982,7 @@ function renderDoctors() {
             src="${doctor.photo}"
             alt="${doctor.name}"
             loading="lazy"
+            decoding="async"
             onerror="this.onerror=null; this.src='images/students/default-avatar.svg';"
           />
         </div>
@@ -1020,25 +1063,146 @@ if (footerYear) {
   function applyTheme(isDark) {
     root.setAttribute('data-theme', isDark ? 'dark' : 'light');
     themeBtn.setAttribute('aria-pressed', String(isDark));
-    themeBtn.setAttribute(
-      'aria-label',
-      isDark ? 'إلغاء الوضع الداكن' : 'تفعيل الوضع الداكن'
-    );
-    if (themeIcon) themeIcon.textContent = isDark ? '☀️' : '🌙';
+    themeBtn.setAttribute('aria-label', isDark ? 'إلغاء الوضع الداكن' : 'تفعيل الوضع الداكن');
     if (themeText) themeText.textContent = isDark ? 'الوضع الفاتح' : 'الوضع الداكن';
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', isDark ? '#150811' : '#f6ebf0');
     try {
       localStorage.setItem('site-theme', isDark ? 'dark' : 'light');
     } catch (e) {
-      // لو المتصفح مانع الوصول لـ localStorage، الموقع يفضل شغال عادي
-      // بس الاختيار مش هيتحفظ بين الزيارات
+      // لو المتصفح مانع localStorage الموقع يفضل شغال عادي
     }
   }
 
-  // نظبط شكل الزرار على حسب الاختيار المحفوظ (اتظبط بدري في <head> عشان مفيش فلاش)
   applyTheme(root.getAttribute('data-theme') === 'dark');
 
+  // دايرة بتتوسع من مكان الزرار وتغطي الشاشة بالثيم الجديد (زي تليجرام)
   themeBtn.addEventListener('click', () => {
-    const isDark = root.getAttribute('data-theme') === 'dark';
-    applyTheme(!isDark);
+    const goDark = root.getAttribute('data-theme') !== 'dark';
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!document.startViewTransition || reduce) {
+      applyTheme(goDark);
+      return;
+    }
+
+    const rect = themeBtn.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+
+    const transition = document.startViewTransition(() => applyTheme(goDark));
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+        { duration: 650, easing: 'cubic-bezier(.4, 0, .2, 1)', pseudoElement: '::view-transition-new(root)' }
+      );
+    }).catch(() => {});
   });
 })();
+
+
+/* -------------------------------------------------------------------------
+   10) لمسات UX/UI: شريط التقدم، الهيدر، القائمة النشطة، tilt وspotlight للكروت،
+       ظهور الكروت تدريجياً، وأنيميشن أرقام العداد
+   ------------------------------------------------------------------------- */
+(function premiumUX() {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // شريط التقدم + حالة الهيدر عند التمرير
+  const bar = document.getElementById('scroll-progress');
+  const header = document.getElementById('site-header');
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      if (bar) bar.style.transform = `scaleX(${max > 0 ? Math.min(scrollY / max, 1) : 0})`;
+      if (header) header.classList.toggle('is-scrolled', scrollY > 24);
+      ticking = false;
+    });
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // تمييز الرابط النشط في القائمة حسب القسم الظاهر
+  const links = [...document.querySelectorAll('.site-nav a[href^="#"]')];
+  const map = new Map();
+  links.forEach((a) => {
+    const sec = document.querySelector(a.getAttribute('href'));
+    if (sec) map.set(sec, a);
+  });
+  if (map.size && 'IntersectionObserver' in window) {
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        links.forEach((l) => l.classList.remove('is-active'));
+        const l = map.get(e.target);
+        if (l) l.classList.add('is-active');
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    map.forEach((_, sec) => spy.observe(sec));
+  }
+
+  // ظهور كروت الطلاب تدريجياً (staggered)
+  let cardObserver = null;
+  if ('IntersectionObserver' in window && !reduce) {
+    cardObserver = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          cardObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  }
+  window.__revealCards = function (grid) {
+    if (!cardObserver) return;
+    [...grid.querySelectorAll('.student-card')].forEach((card, i) => {
+      card.setAttribute('data-reveal', '');
+      card.style.setProperty('--d', `${(i % 6) * 70}ms`);
+      cardObserver.observe(card);
+    });
+  };
+  const galleryGrid = document.getElementById('gallery-grid');
+  if (galleryGrid) window.__revealCards(galleryGrid);
+
+  // spotlight + tilt: بيتابع المؤشر على الكروت (ديسكتوب فقط)
+  if (finePointer && !reduce) {
+    const TILT = '.student-card:not(.memorial-card), .doctor-card, .badge';
+    const GLOW = '.student-card, .doctor-card, .badge, .countdown-box, .find-name';
+    document.addEventListener('pointermove', (e) => {
+      const glow = e.target.closest && e.target.closest(GLOW);
+      if (!glow) return;
+      const r = glow.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      glow.style.setProperty('--mx', `${px * 100}%`);
+      glow.style.setProperty('--my', `${py * 100}%`);
+      if (glow.matches(TILT)) {
+        glow.style.setProperty('--ry', `${(0.5 - px) * 9}deg`);
+        glow.style.setProperty('--rx', `${(py - 0.5) * 9}deg`);
+      }
+    }, { passive: true });
+    document.addEventListener('pointerout', (e) => {
+      const card = e.target.closest && e.target.closest('.student-card, .doctor-card, .badge');
+      if (card && !card.contains(e.relatedTarget)) {
+        card.style.setProperty('--rx', '0deg');
+        card.style.setProperty('--ry', '0deg');
+      }
+    });
+  }
+})();
+
+
+/* -------------------------------------------------------------------------
+   11) Service Worker: بيخزن الموقع في المتصفح عشان يفتح فوراً من تاني زيارة
+   (بيشتغل على GitHub Pages / أي موقع https، ومش بيشتغل لما تفتح الملف مباشرة)
+   ------------------------------------------------------------------------- */
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}

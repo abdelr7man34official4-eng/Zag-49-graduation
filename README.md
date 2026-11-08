@@ -34,3 +34,8 @@ Example:
 
 ## Editing Featured Doctors
 The featured doctors are also defined in `js/script.js`. Add another doctor object following the existing example.
+
+## السرعة (Performance)
+- الموقع بيتخزن في متصفح الزائر (ملف `sw.js`) فيفتح فوراً من تاني زيارة. **لو عدّلت أي ملف** غيّر `VERSION` جوه `sw.js` (مثلاً `v2`) عشان الزوار ياخدوا النسخة الجديدة.
+- شاشة الاحتفال بتظهر مرة كل 12 ساعة بس لكل زائر.
+- الأغنية مبتتحملش غير لما تشتغل. صور الطلاب بتتحمل تدريجياً أثناء النزول؛ ولأقصى سرعة، صغّر الصور (عرض 600px تقريباً وصيغة WebP) قبل رفعها.

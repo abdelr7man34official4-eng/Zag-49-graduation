@@ -23,6 +23,7 @@
   <meta name="description" content="الموقع الرسمي لدفعة 49 - كلية الصيدلة - جامعة الزقازيق. العداد التنازلي للتخرج وذكرياتنا سوا." />
 
   <!-- أيقونة الموقع اللي بتظهر في التاب بتاع المتصفح، هي نفسها اللوجو -->
+  <meta name="theme-color" content="#f6ebf0" />
   <link rel="icon" type="image/png" href="images/logo.png" />
 
   <!--
@@ -31,6 +32,12 @@
     الخط المرفوع داخل فولدر fonts هو الخط الأساسي لكل الموقع
     (اقرا ملاحظة الخط في README.md).
   -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preload" as="image" href="images/logo.png" />
+<link rel="preload" as="style" href="css/style.css" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+<noscript><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
 <link rel="stylesheet" href="css/style.css" />
 
   <!--
@@ -45,28 +52,43 @@
         if (savedTheme === 'dark') {
           document.documentElement.setAttribute('data-theme', 'dark');
         }
+        // شاشة الاحتفال بتظهر مرة كل 12 ساعة بس، وبعدها الموقع يفتح على طول
+        var seen = Number(localStorage.getItem('intro-seen') || 0);
+        if (Date.now() - seen < 12 * 3600 * 1000) {
+          document.documentElement.classList.add('no-intro');
+        } else {
+          localStorage.setItem('intro-seen', String(Date.now()));
+        }
       } catch (e) {}
     })();
   </script>
 </head>
 <body>
 
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
   <!-- =================================================================
        الأغنية: بتشتغل تلقائي أول ما الموقع يفتح
        عشان تضيف أغنيتك: حط ملف الصوت جوه فولدر audio باسم song.mp3
        (لو عايز تغيّر الاسم أو الصيغة، غيّر مسار src هنا تحت)
        ================================================================= -->
-  <audio id="bg-music" src="audio/song.mp3" loop preload="auto"></audio>
+  <audio id="bg-music" src="audio/song.mp3" loop preload="none"></audio>
 
   <!-- =================================================================
        أزرار التحكم العائمة: زرار الأغنية وزرار الاحتفال
        ================================================================= -->
   <div class="floating-controls" id="floating-controls">
     <button id="music-toggle" class="floating-btn" type="button" aria-pressed="false" aria-label="تشغيل/إيقاف الأغنية" title="الأغنية">
-      <span class="floating-btn-icon" id="music-icon">🎵</span>
+      <span class="floating-btn-icon" id="music-icon">
+        <svg class="ic-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+      </span>
     </button>
     <button id="celebration-toggle" class="floating-btn" type="button" aria-pressed="false" aria-label="تشغيل/إيقاف الاحتفال" title="الاحتفال">
-      <span class="floating-btn-icon" id="celebration-icon">🎉</span>
+      <span class="floating-btn-icon" id="celebration-icon">
+        <svg class="ic-off" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.5-12.5 8 8L4 20Z"/><path d="M14 4v2M19 9h2M18 4l-1.5 1.5M20 14l-1.5-.5"/></svg>
+        <svg class="ic-on" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>
+      </span>
     </button>
   </div>
 
@@ -100,7 +122,7 @@
     <div class="header-inner">
       <div class="header-left">
         <a href="#hero" class="brand">
-          <img src="images/logo.png" alt="شعار دفعة 49" class="brand-logo" />
+          <img src="images/logo.png" alt="شعار دفعة 49" class="brand-logo" decoding="async" width="40" height="40" />
           <span class="brand-text">دفعة 49</span>
         </a>
 
@@ -113,7 +135,10 @@
           aria-label="تفعيل الوضع الداكن"
           title="الوضع الداكن"
         >
-          <span class="theme-toggle-icon" id="theme-toggle-icon">🌙</span>
+          <span class="theme-toggle-icon" id="theme-toggle-icon">
+            <svg class="ic-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7Z"/></svg>
+            <svg class="ic-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          </span>
           <span class="sr-only" id="theme-toggle-text">تفعيل الوضع الداكن</span>
         </button>
       </div>
@@ -140,7 +165,7 @@
     <section id="hero" class="hero">
       <div class="hero-glow"></div>
       <div class="hero-content reveal">
-        <img src="images/logo.png" alt="شعار دفعة 49" class="hero-logo" />
+        <img src="images/logo.png" alt="شعار دفعة 49" class="hero-logo" fetchpriority="high" decoding="async" width="148" height="148" />
         <p class="hero-eyebrow">كلية الصيدلة &mdash; جامعة الزقازيق</p>
         <h1 class="hero-title">دفعة <span>49</span></h1>
         <p class="hero-tagline">العب في الطينة و اتبسط </p>
@@ -263,7 +288,7 @@
 
           <form class="find-name-form" id="find-name-form" role="search">
             <div class="find-name-input-wrap">
-              <span class="find-name-search-icon" aria-hidden="true">⌕</span>
+              <span class="find-name-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
               <input
                 id="student-search"
                 class="find-name-input"
@@ -303,7 +328,7 @@
   <footer id="footer" class="site-footer">
     <div class="footer-pharmacy-pattern" aria-hidden="true"></div>
     <div class="footer-content">
-      <img src="images/logo.png" alt="شعار دفعة 49" class="footer-logo" />
+      <img src="images/logo.png" alt="شعار دفعة 49" class="footer-logo" loading="lazy" decoding="async" width="68" height="68" />
       <p class="footer-title">دفعة 49 - كلية الصيدلة - جامعة الزقازيق</p>
 
       <div class="footer-socials" aria-label="روابط التواصل الاجتماعي">
@@ -354,6 +379,6 @@
     </div>
   </footer>
 
-  <script src="js/script.js"></script>
+  <script src="js/script.js" defer></script>
 </body>
 </html>
