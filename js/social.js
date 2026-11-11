@@ -344,10 +344,11 @@
         <button type="button" class="sm-btn sm-btn-primary" data-act="write">
           <span class="sm-btn-ic">💌</span> ابعتله رسالة
         </button>
-        <button type="button" class="sm-btn sm-btn-soft" data-act="inbox">
+        ${mine ? `<button type="button" class="sm-btn sm-btn-soft" data-act="inbox">
           <span class="sm-btn-ic">📥</span> شوف الرسائل ${n ? `<span class="sm-count">${n > 9 ? '9+' : n}</span>` : ''}
-        </button>
+        </button>` : ''}
       </div>
+      ${mine ? '' : '<p class="sm-note sm-private">🔒 الرسائل اللي وصلت للكارت ده خاصة بصاحبه بس.</p>'}
       <div class="sm-claim">${claimHtml}</div>`);
 
     // لو الكارت ده متسجّل لحد تاني نقول كده بدل زرار التسجيل
@@ -514,10 +515,11 @@
 
   /* --- صندوق الرسائل --- */
   function showInbox() {
+    if (!isMine()) { showMenu(); return; } // الرسائل خاصة بصاحب الكارت بس
     stopWatching();
     setView('inbox', `
       <button type="button" class="sm-back" data-act="menu">‹ رجوع</button>
-      <h4 class="sm-section-title">الرسائل اللي وصلت لـ ${esc(curName())}</h4>
+      <h4 class="sm-section-title">الرسائل اللي وصلتلك</h4>
       <div class="sm-list" id="sm-list"><p class="sm-empty">بنحمّل الرسائل...</p></div>`);
     const sid = modal.sid;
     const fail = () => {

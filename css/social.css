@@ -267,3 +267,5 @@ body.view-memories .memories .section-inner { padding-top: 130px; }
 .mem-comment .react-bar { margin-top: 8px; }
 .mem-comment .react-btn { padding: 3px 9px; font-size: .7rem; }
 @media (max-width: 420px) { .react-t { display: none; } }
+
+.sm-private { margin: 14px 0 0; text-align: center; }
