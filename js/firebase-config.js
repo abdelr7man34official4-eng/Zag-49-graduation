@@ -6,10 +6,10 @@
    دليل-التشغيل.md
    ========================================================================= */
 window.FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyAOlBssqp86i0bjsA6OUvftEqwgGXGSKAQ",
+  authDomain: "batch49.firebaseapp.com",
+  projectId: "batch49",
+  storageBucket: "batch49.firebasestorage.app",
+  messagingSenderId: "870534962315",
+  appId: "1:870534962315:web:d2a5b9e565027de47ec88e"
 };
