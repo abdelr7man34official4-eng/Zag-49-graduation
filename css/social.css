@@ -1,0 +1,208 @@
+/* ========================================================================
+   رسائل الكروت + حائط الذكريات — بيستخدم نفس ألوان ومتغيرات الموقع
+   (الملف ده مستقل، مفيش أي تعديل على style.css)
+   ======================================================================== */
+
+/* ---------- كروت الطلاب: قابلة للضغط + النقطة الحمرا ---------- */
+.student-card.has-chat { cursor: pointer; }
+.student-card.has-chat:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+.msg-dot {
+  position: absolute; top: 10px; left: 10px; z-index: 6;
+  min-width: 26px; height: 26px; padding: 0 7px;
+  display: grid; place-items: center;
+  border-radius: 999px;
+  color: #fff; background: #ff3b30;
+  font-family: var(--font-display); font-size: .76rem; font-weight: 800; line-height: 1;
+  box-shadow: 0 0 0 3px var(--glass-strong), 0 6px 14px rgba(255, 59, 48, .55);
+  animation: msg-dot-pop .55s var(--spring) both;
+  pointer-events: none;
+}
+.msg-dot::after {
+  content: ''; position: absolute; inset: -3px; border-radius: inherit;
+  border: 2px solid rgba(255, 59, 48, .6);
+  animation: msg-dot-ping 1.8s ease-out infinite;
+}
+@keyframes msg-dot-pop { from { transform: scale(0); } to { transform: scale(1); } }
+@keyframes msg-dot-ping { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(1.7); opacity: 0; } }
+
+/* ---------- النافذة ---------- */
+html.sm-lock, html.sm-lock body { overflow: hidden; }
+
+.sm-overlay {
+  position: fixed; inset: 0; z-index: 10050;
+  display: flex; align-items: center; justify-content: center;
+  padding: 18px;
+  background: rgba(20, 6, 14, .55);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity .22s ease;
+}
+.sm-overlay[hidden] { display: none; }
+.sm-overlay.is-in { opacity: 1; }
+
+.sm-dialog {
+  position: relative; width: min(480px, 100%); max-height: min(88vh, 720px);
+  display: flex; flex-direction: column;
+  border-radius: var(--radius-lg);
+  color: var(--ink); text-align: right;
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 40px 90px -20px rgba(40, 6, 22, .6);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  outline: 0;
+  transform: translateY(18px) scale(.97);
+  transition: transform .35s var(--spring);
+}
+[data-theme="dark"] .sm-dialog { background: rgba(28, 20, 34, .94); }
+.sm-overlay.is-in .sm-dialog { transform: none; }
+
+.sm-close {
+  position: absolute; top: 14px; left: 14px; z-index: 2;
+  width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer;
+  color: var(--ink-2); background: var(--accent-soft); font-size: 1.4rem; line-height: 1;
+}
+.sm-close:hover { color: var(--accent); }
+
+.sm-head { display: flex; align-items: center; gap: 14px; padding: 22px 22px 16px; border-bottom: 1px solid var(--glass-line); }
+.sm-photo {
+  width: 62px; height: 62px; flex: none; border-radius: 50%; object-fit: cover;
+  background: linear-gradient(160deg, var(--color-burgundy), var(--color-burgundy-dark));
+  border: 2px solid var(--gold);
+}
+.sm-head-text { min-width: 0; padding-left: 40px; }
+.sm-kicker { display: block; color: var(--gold); font-size: .62rem; letter-spacing: 2px; }
+.sm-title { color: var(--heading); font-family: var(--font-display); font-size: 1.15rem; line-height: 1.4; overflow-wrap: anywhere; }
+
+.sm-body { padding: 20px 22px 24px; overflow-y: auto; overscroll-behavior: contain; }
+
+/* أزرار */
+.sm-actions { display: grid; gap: 12px; }
+.sm-btn {
+  position: relative; min-height: 54px; padding: 0 22px; border: 0; border-radius: 18px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  font: inherit; font-weight: 800; transition: transform .35s var(--spring), box-shadow .3s, opacity .2s;
+}
+.sm-btn:active { transform: scale(.97); }
+.sm-btn:disabled { opacity: .6; cursor: default; }
+.sm-btn-primary {
+  color: #fff;
+  background: linear-gradient(145deg, var(--color-burgundy-light), var(--color-burgundy-dark));
+  box-shadow: 0 14px 28px -10px rgba(125, 19, 69, .6), inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+.sm-btn-primary:hover:not(:disabled) { transform: translateY(-2px); }
+.sm-btn-soft { color: var(--heading); background: var(--accent-soft); border: 1px solid var(--glass-line); }
+.sm-btn-sm { min-height: 42px; padding: 0 18px; border-radius: 14px; font-size: .9rem; }
+.sm-btn-ic { font-size: 1.15rem; }
+.sm-count {
+  min-width: 24px; height: 24px; padding: 0 7px; display: inline-grid; place-items: center;
+  border-radius: 999px; color: #fff; background: #ff3b30; font-size: .74rem; line-height: 1;
+}
+
+.sm-claim { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--glass-line); text-align: center; }
+.sm-claim p { color: var(--ink-3); font-size: .84rem; }
+.sm-link { margin-top: 6px; padding: 6px 10px; border: 0; background: none; cursor: pointer; color: var(--accent); font: inherit; font-size: .86rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+.sm-back { margin-bottom: 14px; padding: 4px 2px; border: 0; background: none; cursor: pointer; color: var(--accent); font: inherit; font-weight: 700; }
+
+/* نموذج الكتابة */
+.sm-form { display: grid; gap: 8px; }
+.sm-label { color: var(--heading); font-size: .9rem; font-weight: 700; }
+.sm-input {
+  width: 100%; padding: 14px 16px; border-radius: 16px; outline: 0;
+  color: var(--ink); font: inherit; font-size: .95rem; line-height: 1.8;
+  background: var(--bg-2); border: 1px solid var(--glass-line);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, .04);
+  transition: border-color .3s, box-shadow .3s;
+}
+[data-theme="dark"] .sm-input { background: rgba(255, 255, 255, .06); }
+.sm-input::placeholder { color: var(--ink-3); }
+.sm-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.sm-textarea { min-height: 130px; resize: vertical; }
+.sm-hint { margin-top: -2px; color: var(--ink-3); font-size: .74rem; text-align: left; }
+.sm-sign-preview { min-height: 1.6em; color: var(--accent); font-family: var(--font-display); font-weight: 700; }
+.sm-error { color: #d92d20; font-size: .86rem; }
+[data-theme="dark"] .sm-error { color: #ff8a80; }
+.sm-error[hidden] { display: none; }
+.sm-send { margin-top: 6px; }
+
+/* تم الإرسال */
+.sm-sent { text-align: center; }
+.sm-sent-ic {
+  width: 68px; height: 68px; margin: 4px auto 12px; display: grid; place-items: center;
+  border-radius: 50%; color: #fff; font-size: 2rem; font-weight: 800;
+  background: linear-gradient(145deg, #34c759, #1f9d45);
+  box-shadow: 0 14px 30px -10px rgba(52, 199, 89, .6);
+  animation: msg-dot-pop .5s var(--spring) both;
+}
+.sm-sent h4 { color: var(--heading); font-size: 1.25rem; }
+.sm-sent p { margin: 4px 0 20px; color: var(--ink-3); }
+
+/* الرسائل */
+.sm-section-title { margin-bottom: 14px; color: var(--heading); font-size: 1rem; }
+.sm-list { display: grid; gap: 12px; }
+.sm-empty { padding: 18px 8px; color: var(--ink-3); font-size: .9rem; text-align: center; }
+.sm-msg, .mem-comment {
+  padding: 14px 16px; border-radius: 18px;
+  background: var(--bg-2); border: 1px solid var(--glass-line);
+}
+[data-theme="dark"] .sm-msg, [data-theme="dark"] .mem-comment { background: rgba(255, 255, 255, .06); }
+.sm-msg-text { color: var(--ink); line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+.sm-msg-foot { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--glass-line); }
+.sm-msg-sign { color: var(--accent); font-family: var(--font-display); font-weight: 800; overflow-wrap: anywhere; }
+.sm-msg-foot time { flex: none; color: var(--ink-3); font-size: .7rem; }
+
+/* ---------- حائط الذكريات ---------- */
+.memories[hidden] { display: none; }
+.memories .section-inner { padding-top: 40px; }
+.memories-intro { max-width: 640px; margin: -6px auto 34px; color: var(--ink-2); line-height: 2; }
+
+.memory-form {
+  display: grid; gap: 10px; max-width: 680px; margin: 0 auto 44px; padding: 26px;
+  border-radius: var(--radius-lg); text-align: right;
+  background: var(--glass); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+}
+.memory-form .sm-btn { justify-self: start; }
+.memory-form .sm-btn.is-done { background: linear-gradient(145deg, #34c759, #1f9d45); }
+
+.memory-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; text-align: right; align-items: start; }
+.memory-empty { grid-column: 1 / -1; color: var(--ink-3); }
+.memory-empty[hidden] { display: none; }
+
+.mem-card {
+  display: flex; flex-direction: column; gap: 12px; padding: 22px;
+  border-radius: var(--radius-md);
+  background: var(--glass-strong); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow);
+  transition: box-shadow .4s var(--ease), transform .4s var(--ease);
+  animation: mem-in .6s var(--ease) both;
+}
+.mem-card:hover { box-shadow: var(--glass-shadow-hover); }
+@keyframes mem-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.mem-text { color: var(--ink); line-height: 2; white-space: pre-wrap; overflow-wrap: anywhere; }
+.mem-foot { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-top: 10px; border-top: 1px dashed var(--glass-line); }
+.mem-sign { color: var(--accent); font-family: var(--font-display); font-weight: 800; overflow-wrap: anywhere; }
+.mem-time { flex: none; color: var(--ink-3); font-size: .7rem; }
+.mem-toggle { align-self: flex-start; padding: 6px 12px; border: 0; border-radius: 999px; cursor: pointer; color: var(--accent); background: var(--accent-soft); font: inherit; font-size: .82rem; font-weight: 700; }
+.mem-comments[hidden] { display: none; }
+.mem-comments { display: grid; gap: 10px; }
+.mem-comment-list { display: grid; gap: 8px; }
+.mem-comment { padding: 10px 14px; border-radius: 14px; }
+.mem-comment p { color: var(--ink); font-size: .9rem; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.mem-comment-sign { color: var(--accent); font-size: .78rem; font-weight: 700; }
+.mem-comment-form { display: grid; gap: 8px; }
+.mem-comment-form .sm-input { padding: 10px 14px; border-radius: 14px; font-size: .9rem; }
+.mem-comment-form .sm-btn { justify-self: start; }
+
+@media (max-width: 560px) {
+  .sm-overlay { align-items: flex-end; padding: 0; }
+  .sm-dialog { width: 100%; max-height: 92vh; border-radius: 28px 28px 0 0; }
+  .memory-form { padding: 18px; }
+  .memory-list { grid-template-columns: 1fr; }
+  .msg-dot { top: 7px; left: 7px; min-width: 22px; height: 22px; font-size: .68rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .msg-dot, .msg-dot::after, .mem-card, .sm-sent-ic { animation: none; }
+  .sm-dialog, .sm-overlay { transition: none; }
+}

@@ -1,7 +1,7 @@
 /* Service Worker — دفعة 49
    الهدف: أول زيارة عادية، وكل زيارة بعدها بتفتح فوراً من الكاش.
    لو غيرت أي ملف، غيّر رقم VERSION تحت عشان الزوار ياخدوا النسخة الجديدة. */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CORE = `core-${VERSION}`;
 const RUNTIME = `runtime-${VERSION}`;
 
@@ -10,6 +10,9 @@ const CORE_FILES = [
   'index.html',
   'css/style.css',
   'js/script.js',
+  'css/social.css',
+  'js/social.js',
+  'js/firebase-config.js',
   'images/logo.png',
   'images/students/default-avatar.svg'
 ];

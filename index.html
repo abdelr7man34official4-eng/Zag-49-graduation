@@ -39,6 +39,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
 <noscript><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
 <link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/social.css" />
 
   <!--
     الكود الصغير ده بيشتغل قبل ما الصفحة تتعرض، عشان لو الزائر
@@ -320,6 +321,36 @@
         <div class="gallery-pagination" id="gallery-pagination" aria-label="ترقيم صفحات الصور"></div>
       </div>
     </section>
+
+    <!-- =================================================================
+         حائط الذكريات: أي حد يقدر يكتب ذكرى ويعلّق على ذكريات التانيين
+         (بيظهر تلقائياً بعد ما تفعّل Firebase — اقرا دليل-التشغيل.md)
+         ================================================================= -->
+    <section id="memories" class="memories" hidden>
+      <div class="section-inner">
+        <span class="section-eyebrow">اكتب ذكراك</span>
+        <h2 class="section-title">حائط الذكريات</h2>
+        <p class="memories-intro">
+          اكتب موقف، أو ذكرى، أو كلمة حلوة عن الدفعة. أي حد يقدر يكتب ويعلّق، وكلنا هنفتكرها مع بعض.
+        </p>
+
+        <form class="memory-form" id="memory-form" novalidate>
+          <label class="sm-label" for="memory-text">ذكراك</label>
+          <textarea id="memory-text" class="sm-input sm-textarea" rows="4" placeholder="اكتب ذكرى أو موقف فاكره من الدفعة..."></textarea>
+          <div class="sm-hint"><span id="memory-count">0</span> / 700</div>
+
+          <label class="sm-label" for="memory-name">اسمك (التوقيع)</label>
+          <input id="memory-name" class="sm-input" type="text" placeholder="اكتب اسمك" autocomplete="name" />
+
+          <p class="sm-error" id="memory-error" role="alert" hidden></p>
+          <button type="submit" class="sm-btn sm-btn-primary">انشر الذكرى <span>←</span></button>
+        </form>
+
+        <div class="memory-list" id="memory-list">
+          <p class="sm-empty memory-empty" id="memory-empty">لسه مفيش ذكريات — كن أول واحد يكتب 💛</p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- =================================================================
@@ -380,5 +411,7 @@
   </footer>
 
   <script src="js/script.js" defer></script>
+  <script src="js/firebase-config.js" defer></script>
+  <script src="js/social.js" defer></script>
 </body>
 </html>

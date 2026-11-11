@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // نص عادي بطول محدد
+    function txt(v, max) {
+      return v is string && v.size() > 0 && v.size() <= max;
+    }
+
+    // الرسائل: أي حد يقدر يقرأ ويبعت، لكن محدش يقدر يعدّل أو يمسح من الموقع
+    match /messages/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['toId','toName','fromName','text','createdAt'])
+                    && txt(request.resource.data.toId, 60)
+                    && txt(request.resource.data.toName, 120)
+                    && txt(request.resource.data.fromName, 40)
+                    && txt(request.resource.data.text, 600)
+                    && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+
+    // الذكريات
+    match /memories/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['name','text','createdAt'])
+                    && txt(request.resource.data.name, 40)
+                    && txt(request.resource.data.text, 700)
+                    && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+
+    // التعليقات على الذكريات
+    match /comments/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['memoryId','name','text','createdAt'])
+                    && txt(request.resource.data.memoryId, 60)
+                    && txt(request.resource.data.name, 40)
+                    && txt(request.resource.data.text, 300)
+                    && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+  }
+}
