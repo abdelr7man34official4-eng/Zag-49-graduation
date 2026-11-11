@@ -182,8 +182,8 @@
           renderInbox(list);
         }
         updateDots();
-      }, () => {});
-    }).catch(() => {});
+      }, (err) => console.warn('[رسائل] مشكلة في متابعة الرسائل:', err));
+    }).catch((err) => console.warn('[رسائل] مشكلة في الاتصال بـ Firebase:', err));
   }
 
   /* ---------------- النافذة (Modal) ---------------- */
@@ -436,7 +436,7 @@
     decorateCards();
 
     const hint = document.querySelector('.gallery-hint');
-    if (hint && !hint.textContent.trim()) hint.textContent = 'اضغط على أي كارت علشان تبعتله رسالة 💌';
+    if (hint && !hint.textContent.trim()) hint.textContent = 'اضغط على أي كارت علشان تبعتله رسالة 💌 — ولو ده كارتك دوس عليه واختار «آه، ده كارتي» علشان تظهرلك نقطة حمرا لما حد يبعتلك.';
   }
 
   /* =======================================================================
@@ -448,6 +448,46 @@
   const listEl = document.getElementById('memory-list');
   if (section && form && listEl) {
     section.hidden = false;
+
+    /* حائط الذكريات صفحة لوحدها: لما تدوس عليه من القائمة بيظهر هو بس */
+    const nav = document.getElementById('site-nav');
+    const navToggle = document.getElementById('nav-toggle');
+    let memLink = null;
+    if (nav) {
+      memLink = document.createElement('a');
+      memLink.href = '#memories';
+      memLink.textContent = 'حائط الذكريات';
+      memLink.addEventListener('click', () => {
+        nav.classList.remove('open');
+        if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+      });
+      nav.insertBefore(memLink, nav.querySelector('a[href="#footer"]'));
+    }
+    const inner = section.querySelector('.section-inner');
+    if (inner) {
+      const back = document.createElement('a');
+      back.href = '#hero';
+      back.className = 'mem-back';
+      back.textContent = '→ رجوع للموقع';
+      inner.insertBefore(back, inner.firstChild);
+    }
+    let wasMemView = false;
+    function applyView() {
+      const on = location.hash === '#memories';
+      document.body.classList.toggle('view-memories', on);
+      if (on) {
+        nav && nav.querySelectorAll('a').forEach((a) => a.classList.remove('is-active'));
+        if (memLink) memLink.classList.add('is-active');
+        window.scrollTo(0, 0);
+      } else if (wasMemView) {
+        if (memLink) memLink.classList.remove('is-active');
+        const target = location.hash.length > 1 ? document.querySelector(location.hash) : null;
+        if (target) target.scrollIntoView(); else window.scrollTo(0, 0);
+      }
+      wasMemView = on;
+    }
+    window.addEventListener('hashchange', applyView);
+    applyView();
 
     const nameIn = $('#memory-name', form);
     const textIn = $('#memory-text', form);

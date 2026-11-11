@@ -7,7 +7,15 @@ service cloud.firestore {
       return v is string && v.size() > 0 && v.size() <= max;
     }
 
-    // الرسائل: أي حد يقدر يقرأ ويبعت، لكن محدش يقدر يعدّل أو يمسح من الموقع
+    // الأدمن: اكتبي إيميل حساب جوجل بتاعك مكان PUT_YOUR_EMAIL_HERE (بحروف صغيرة)
+    // وبس الإيميل ده يقدر يمسح من صفحة admin.html
+    function isAdmin() {
+      return request.auth != null
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == 'PUT_YOUR_EMAIL_HERE';
+    }
+
+    // الرسائل: أي حد يقدر يقرأ ويبعت، لكن المسح للأدمن بس
     match /messages/{id} {
       allow read: if true;
       allow create: if request.resource.data.keys().hasOnly(['toId','toName','fromName','text','createdAt'])
@@ -16,7 +24,8 @@ service cloud.firestore {
                     && txt(request.resource.data.fromName, 40)
                     && txt(request.resource.data.text, 600)
                     && request.resource.data.createdAt == request.time;
-      allow update, delete: if false;
+      allow update: if false;
+      allow delete: if isAdmin();
     }
 
     // الذكريات
@@ -26,7 +35,8 @@ service cloud.firestore {
                     && txt(request.resource.data.name, 40)
                     && txt(request.resource.data.text, 700)
                     && request.resource.data.createdAt == request.time;
-      allow update, delete: if false;
+      allow update: if false;
+      allow delete: if isAdmin();
     }
 
     // التعليقات على الذكريات
@@ -37,7 +47,8 @@ service cloud.firestore {
                     && txt(request.resource.data.name, 40)
                     && txt(request.resource.data.text, 300)
                     && request.resource.data.createdAt == request.time;
-      allow update, delete: if false;
+      allow update: if false;
+      allow delete: if isAdmin();
     }
   }
 }

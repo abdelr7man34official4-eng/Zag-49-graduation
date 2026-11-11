@@ -206,3 +206,15 @@ html.sm-lock, html.sm-lock body { overflow: hidden; }
   .msg-dot, .msg-dot::after, .mem-card, .sm-sent-ic { animation: none; }
   .sm-dialog, .sm-overlay { transition: none; }
 }
+
+/* ---------- حائط الذكريات كصفحة لوحدها ---------- */
+.memories { display: none; }
+body.view-memories main > section:not(.memories) { display: none; }
+body.view-memories .memories { display: block; min-height: 70vh; }
+body.view-memories .memories .section-inner { padding-top: 130px; }
+.mem-back {
+  display: inline-block; margin-bottom: 18px; padding: 8px 16px; border-radius: 999px;
+  color: var(--accent); background: var(--accent-soft); border: 1px solid var(--glass-line);
+  font-size: .86rem; font-weight: 700; text-decoration: none;
+}
+.mem-back:hover { color: var(--heading); }

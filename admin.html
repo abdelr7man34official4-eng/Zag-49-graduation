@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>لوحة التحكم | دفعة 49</title>
+  <link rel="icon" type="image/png" href="images/logo.png" />
+  <script>
+    try { if (localStorage.getItem('site-theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/social.css" />
+  <style>
+    .adm { max-width: 860px; margin: 0 auto; padding: 48px 18px 80px; text-align: right; }
+    .adm h1 { color: var(--heading); font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 6px; }
+    .adm-sub { color: var(--ink-3); margin-bottom: 24px; }
+    .adm-card { padding: 22px; border-radius: var(--radius-lg); background: var(--glass-strong); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); }
+    .adm-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 18px; }
+    .adm-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .adm-tab { padding: 9px 16px; border: 1px solid var(--glass-line); border-radius: 999px; cursor: pointer; font: inherit; font-weight: 700; color: var(--accent); background: var(--accent-soft); }
+    .adm-tab[aria-selected="true"] { color: #fff; background: linear-gradient(145deg, var(--color-burgundy-light), var(--color-burgundy-dark)); }
+    .adm-item { display: grid; gap: 8px; padding: 14px 16px; margin-bottom: 10px; border-radius: 16px; background: var(--bg-2); border: 1px solid var(--glass-line); }
+    [data-theme="dark"] .adm-item { background: rgba(255,255,255,.06); }
+    .adm-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--ink-3); font-size: .78rem; }
+    .adm-meta b { color: var(--accent); }
+    .adm-text { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.9; }
+    .adm-del { justify-self: start; padding: 7px 14px; border: 0; border-radius: 12px; cursor: pointer; color: #fff; background: #d92d20; font: inherit; font-weight: 700; font-size: .84rem; }
+    .adm-del:disabled { opacity: .5; }
+    .adm-note { padding: 12px 14px; border-radius: 14px; color: var(--ink-2); background: var(--accent-soft); font-size: .86rem; line-height: 1.9; }
+    .adm [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="adm">
+    <h1>لوحة التحكم</h1>
+    <p class="adm-sub">الصفحة دي للأدمن بس — الرسائل والذكريات والتعليقات وتقدر تمسح أي حاجة.</p>
+
+    <section class="adm-card" id="adm-login">
+      <p class="adm-note" id="adm-config-note" hidden>إعدادات Firebase فاضية في js/firebase-config.js.</p>
+      <button type="button" class="sm-btn sm-btn-primary" id="adm-signin">تسجيل الدخول بحساب Google</button>
+      <p class="sm-error" id="adm-login-error" role="alert" hidden></p>
+    </section>
+
+    <section id="adm-panel" hidden>
+      <div class="adm-bar">
+        <span id="adm-user" class="adm-sub" style="margin:0"></span>
+        <button type="button" class="adm-tab" id="adm-signout">تسجيل خروج</button>
+      </div>
+      <div class="adm-tabs" role="tablist">
+        <button type="button" class="adm-tab" role="tab" data-tab="messages" aria-selected="true">الرسائل (<span id="n-messages">0</span>)</button>
+        <button type="button" class="adm-tab" role="tab" data-tab="memories" aria-selected="false">الذكريات (<span id="n-memories">0</span>)</button>
+        <button type="button" class="adm-tab" role="tab" data-tab="comments" aria-selected="false">التعليقات (<span id="n-comments">0</span>)</button>
+      </div>
+      <p class="sm-error" id="adm-error" role="alert" hidden></p>
+      <div id="adm-list"></div>
+    </section>
+  </main>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
