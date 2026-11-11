@@ -226,3 +226,44 @@ body.view-memories .memories .section-inner { padding-top: 130px; }
   border: 1px solid currentColor; transition: opacity .3s;
 }
 .footer-admin:hover { opacity: .9; }
+
+/* ---------- التوقيع المقفول ---------- */
+.sign-slot { min-height: 1.6em; font-size: .9rem; }
+.sign-name { color: var(--accent); font-family: var(--font-display); font-weight: 800; }
+.sign-warn { color: var(--ink-3); }
+
+/* ---------- اختيار الكارت وتأكيده ---------- */
+.sm-note { margin-bottom: 12px; color: var(--ink-3); font-size: .86rem; line-height: 1.9; }
+.sm-pick-list { margin-top: 12px; }
+.sm-pick-item {
+  width: 100%; padding: 13px 16px; border: 1px solid var(--glass-line); border-radius: 16px; cursor: pointer;
+  color: var(--heading); background: var(--bg-2); font: inherit; font-weight: 700; text-align: right;
+  transition: border-color .25s, transform .25s var(--spring);
+}
+[data-theme="dark"] .sm-pick-item { background: rgba(255,255,255,.06); }
+.sm-pick-item:hover { border-color: var(--accent); transform: translateY(-1px); }
+.sm-taken { color: var(--ink-3); }
+.sm-confirm { text-align: center; }
+.sm-confirm-photo { width: 110px; height: 110px; margin: 0 auto 10px; border-radius: 50%; object-fit: cover; border: 3px solid var(--gold); background: var(--color-burgundy); }
+.sm-confirm h4 { color: var(--heading); font-size: 1.2rem; margin-bottom: 8px; overflow-wrap: anywhere; }
+.sm-confirm > p { color: var(--ink-2); font-size: .9rem; line-height: 1.9; margin-bottom: 14px; }
+.sm-sent-ic-warn { background: linear-gradient(145deg, #f5a524, #d98200); box-shadow: 0 14px 30px -10px rgba(245,165,36,.6); }
+
+/* ---------- التفاعلات ---------- */
+.react-bar { display: flex; flex-wrap: wrap; gap: 6px; }
+.react-btn {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 999px; cursor: pointer;
+  color: var(--ink-2); background: var(--bg-2); border: 1px solid var(--glass-line);
+  font: inherit; font-size: .76rem; line-height: 1.5;
+  transition: transform .25s var(--spring), background .25s, border-color .25s;
+}
+[data-theme="dark"] .react-btn { background: rgba(255,255,255,.06); }
+.react-btn:hover { transform: translateY(-1px); border-color: var(--accent); }
+.react-btn:active { transform: scale(.94); }
+.react-btn.is-mine { color: #fff; border-color: transparent; background: linear-gradient(145deg, var(--color-burgundy-light), var(--color-burgundy-dark)); }
+.react-e { font-size: .95rem; }
+.react-n { min-width: 18px; padding: 0 5px; border-radius: 999px; text-align: center; font-weight: 800; background: rgba(0,0,0,.08); }
+.react-btn.is-mine .react-n { background: rgba(255,255,255,.25); }
+.mem-comment .react-bar { margin-top: 8px; }
+.mem-comment .react-btn { padding: 3px 9px; font-size: .7rem; }
+@media (max-width: 420px) { .react-t { display: none; } }

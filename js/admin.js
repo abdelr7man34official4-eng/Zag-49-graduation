@@ -11,18 +11,25 @@
 
   if (!cfg.apiKey || !cfg.projectId) { $('adm-config-note').hidden = false; $('adm-signin').disabled = true; return; }
 
-  const data = { messages: [], memories: [], comments: [] };
+  const data = { messages: [], memories: [], comments: [], claims: [] };
   let tab = 'messages';
   let fs, auth, db, authMod, stops = [];
 
   const showErr = (id, m) => { const el = $(id); el.textContent = m; el.hidden = !m; };
 
   function render() {
-    ['messages', 'memories', 'comments'].forEach((k) => { $('n-' + k).textContent = String(data[k].length); });
+    ['messages', 'memories', 'comments', 'claims'].forEach((k) => { $('n-' + k).textContent = String(data[k].length); });
     const list = $('adm-list');
     const items = data[tab];
     if (!items.length) { list.innerHTML = '<p class="sm-empty">مفيش حاجة هنا.</p>'; return; }
     list.innerHTML = items.map((d) => {
+      if (tab === 'claims') {
+        return `<article class="adm-item">
+          <div class="adm-meta"><span>الاسم: <b>${esc(d.name)}</b></span><span>${esc(fmt(d.ts))}</span></div>
+          <div class="adm-text">رقم الكارت: ${esc(d.id)}</div>
+          <button type="button" class="adm-del" data-id="${esc(d.id)}">إلغاء تسجيل الكارت</button>
+        </article>`;
+      }
       let meta = '';
       if (tab === 'messages') meta = `<span>إلى: <b>${esc(d.toName)}</b></span><span>من: <b>${esc(d.fromName)}</b></span>`;
       else meta = `<span>بقلم: <b>${esc(d.name)}</b></span>`;
@@ -45,8 +52,18 @@
   }
 
   async function del(id) {
-    if (!confirm('متأكدة إنك عايزة تمسحي ده؟ مش هتقدري ترجعيه.')) return;
+    const releasing = tab === 'claims';
+    if (!confirm(releasing
+      ? 'هتلغي تسجيل الكارت ده، وصاحبه (أو أي حد تاني) هيقدر يسجّله من جديد. متأكدة؟'
+      : 'متأكدة إنك عايزة تمسحي ده؟ مش هتقدري ترجعيه.')) return;
     try {
+      if (releasing) {
+        const item = data.claims.find((c) => c.id === id);
+        if (item && item.uid) await fs.deleteDoc(fs.doc(db, 'users', item.uid));
+        await fs.deleteDoc(fs.doc(db, 'claims', id));
+        showErr('adm-error', '');
+        return;
+      }
       if (tab === 'memories') {
         // نمسح تعليقات الذكرى معاها
         const snap = await fs.getDocs(fs.query(fs.collection(db, 'comments'), fs.where('memoryId', '==', id)));
@@ -65,7 +82,7 @@
     $('adm-login').hidden = true;
     $('adm-panel').hidden = false;
     $('adm-user').textContent = user.email;
-    stops = ['messages', 'memories', 'comments'].map(watch);
+    stops = ['messages', 'memories', 'comments', 'claims'].map(watch);
   }
   function leave() {
     stops.forEach((s) => s()); stops = [];
@@ -79,7 +96,7 @@
     import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`)
   ]).then(([appMod, a, f]) => {
     authMod = a; fs = f;
-    const app = appMod.initializeApp(cfg);
+    const app = appMod.initializeApp(cfg, 'admin'); // اسم مختلف: عشان تسجيل دخول الأدمن ميبوظش حساب الكارت على نفس المتصفح
     auth = a.getAuth(app);
     db = f.getFirestore(app);
     a.onAuthStateChanged(auth, (u) => (u ? enter(u) : leave()));
