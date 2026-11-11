@@ -1,7 +1,7 @@
 /* Service Worker — دفعة 49
    الهدف: أول زيارة عادية، وكل زيارة بعدها بتفتح فوراً من الكاش.
    لو غيرت أي ملف، غيّر رقم VERSION تحت عشان الزوار ياخدوا النسخة الجديدة. */
-const VERSION = 'v2';
+const VERSION = 'v4';
 const CORE = `core-${VERSION}`;
 const RUNTIME = `runtime-${VERSION}`;
 
@@ -70,6 +70,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (/\.(mp3|mp4|wav|ogg)$/i.test(url.pathname)) return;
+  if (/\/admin\.(html|js)$/i.test(url.pathname)) return; // لوحة التحكم دايماً من النت
 
   if (req.mode === 'navigate' || /\.(html|css|js)$/i.test(url.pathname)) {
     event.respondWith(staleWhileRevalidate(req, CORE));
