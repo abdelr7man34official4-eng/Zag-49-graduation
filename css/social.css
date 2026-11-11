@@ -218,3 +218,11 @@ body.view-memories .memories .section-inner { padding-top: 130px; }
   font-size: .86rem; font-weight: 700; text-decoration: none;
 }
 .mem-back:hover { color: var(--heading); }
+
+/* رابط لوحة التحكم الصغير في الفوتر */
+.footer-admin {
+  display: inline-block; margin-top: 10px; padding: 4px 12px; border-radius: 999px;
+  color: inherit; opacity: .45; font-size: .72rem; text-decoration: none;
+  border: 1px solid currentColor; transition: opacity .3s;
+}
+.footer-admin:hover { opacity: .9; }
