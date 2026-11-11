@@ -269,3 +269,9 @@ body.view-memories .memories .section-inner { padding-top: 130px; }
 @media (max-width: 420px) { .react-t { display: none; } }
 
 .sm-private { margin: 14px 0 0; text-align: center; }
+
+.sm-rules { margin: 0 0 14px; padding: 12px 30px 12px 14px; border-radius: 16px; color: var(--ink-2); background: var(--accent-soft); font-size: .86rem; line-height: 2; }
+.sm-rules li { margin-bottom: 2px; }
+.nav-pick { font-weight: 800; color: var(--accent) !important; }
+.sm-photo[hidden] { display: none; }
+.sm-head:has(.sm-photo[hidden]) .sm-head-text { padding-right: 0; }

@@ -11,6 +11,7 @@
 
   if (!cfg.apiKey || !cfg.projectId) { $('adm-config-note').hidden = false; $('adm-signin').disabled = true; return; }
 
+  $('adm-login').hidden = true; // نستنى نعرف إنتِ داخلة ولا لأ قبل ما نظهر زرار الدخول
   const data = { messages: [], memories: [], comments: [], claims: [] };
   let tab = 'messages';
   let fs, auth, db, authMod, stops = [];
@@ -82,6 +83,7 @@
     $('adm-login').hidden = true;
     $('adm-panel').hidden = false;
     $('adm-user').textContent = user.email;
+    try { localStorage.setItem('adm-email', user.email); } catch (e) {}
     stops = ['messages', 'memories', 'comments', 'claims'].map(watch);
   }
   function leave() {
@@ -98,14 +100,20 @@
     authMod = a; fs = f;
     const app = appMod.initializeApp(cfg, 'admin'); // اسم مختلف: عشان تسجيل دخول الأدمن ميبوظش حساب الكارت على نفس المتصفح
     auth = a.getAuth(app);
+    a.setPersistence(auth, a.browserLocalPersistence).catch(() => {}); // يفضل مسجّل دخول على الجهاز ده
+    a.setPersistence(auth, a.browserLocalPersistence).catch(() => {}); // الدخول يفضل محفوظ على الجهاز
     db = f.getFirestore(app);
     a.onAuthStateChanged(auth, (u) => (u ? enter(u) : leave()));
-  }).catch(() => showErr('adm-login-error', 'معرفناش نتصل بـ Firebase. اتأكدي من النت.'));
+  }).catch(() => { $('adm-login').hidden = false; showErr('adm-login-error', 'معرفناش نتصل بـ Firebase. اتأكدي من النت.'); });
 
   $('adm-signin').addEventListener('click', () => {
     if (!auth) return;
     showErr('adm-login-error', '');
-    authMod.signInWithPopup(auth, new authMod.GoogleAuthProvider()).catch((e) => {
+    const provider = new authMod.GoogleAuthProvider();
+    let lastEmail = null;
+    try { lastEmail = localStorage.getItem('adm-email'); } catch (e) {}
+    provider.setCustomParameters(lastEmail ? { login_hint: lastEmail } : {});
+    authMod.signInWithPopup(auth, provider).catch((e) => {
       showErr('adm-login-error', e.code === 'auth/unauthorized-domain'
         ? 'الدومين ده مش مضاف في Firebase ← Authentication ← Settings ← Authorized domains.'
         : e.code === 'auth/operation-not-allowed'

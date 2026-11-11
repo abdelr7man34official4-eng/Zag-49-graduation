@@ -160,6 +160,7 @@
   let profile = null;      // { cardId, name } لو سجّل كارته
   let me = null;           // رقم كارتي
   let stopProfile = null;
+  let headerPickLink = null;
   let myMessages = [];
   let stopMyWatch = null;
 
@@ -237,6 +238,7 @@
     watchMine();
     updateDots();
     refreshSignLines();
+    if (headerPickLink) headerPickLink.textContent = p ? 'كارتي ✓' : 'اختار كارتك';
     if (typeof rerenderMemories === 'function') rerenderMemories();
     if (modal.open && modal.view === 'menu') showMenu();
   }
@@ -366,11 +368,27 @@
   /* --- اختيار الكارت (بحث بالاسم) --- */
   function showPick() {
     stopWatching();
+    if (profile) {
+      setView('picked', `
+        <div class="sm-sent">
+          <div class="sm-sent-ic">✓</div>
+          <h4>انت مسجّل بالفعل</h4>
+          <p>كارتك: <b>${esc(profile.name)}</b><br>مينفعش تغيّر الكارت. لو اخترت غلط كلّم أدمن الموقع.</p>
+          <div class="sm-actions">
+            <button type="button" class="sm-btn sm-btn-primary" data-act="my-card">افتح كارتي</button>
+          </div>
+        </div>`);
+      return;
+    }
     setView('pick', `
       ${modal.idx !== null ? '<button type="button" class="sm-back" data-act="menu">‹ رجوع</button>' : ''}
       <h4 class="sm-section-title">اختار كارتك</h4>
-      <p class="sm-note">اكتب اسمك ودوس عليه. الكارت ده هيبقى حسابك، واسمك هيظهر بيه في الموقع كله ومش هتقدر تغيره.</p>
-      <input id="sm-find" class="sm-input" type="search" autocomplete="off" placeholder="اكتب اسمك..." />
+      <ul class="sm-rules">
+        <li>ينفع تختار <b>كارت واحد بس</b>، ومينفعش تختار كروت تانية بعده.</li>
+        <li>اسم الكارت هيظهر في كل رسايلك وذكرياتك وتعليقاتك، <b>ومش هتقدر تغيره</b>.</li>
+        <li>مش هتعرف تشوف الرسايل اللي جايالك <b>إلا لما تختار كارتك</b>.</li>
+      </ul>
+      <input id="sm-find" class="sm-input" type="search" autocomplete="off" placeholder="اكتب اسمك وادوس عليه..." />
       <div class="sm-list sm-pick-list" id="sm-find-list"><p class="sm-empty">اكتب أول حروف من اسمك</p></div>`);
     const input = $('#sm-find', bodyEl);
     const out = $('#sm-find-list', bodyEl);
@@ -396,7 +414,7 @@
       <div class="sm-confirm">
         <img class="sm-confirm-photo" src="${esc(st.photo)}" alt="" onerror="this.onerror=null;this.src='images/students/default-avatar.svg';" />
         <h4>${esc(st.name)}</h4>
-        <p>انت صاحب الكارت ده؟ بعد التأكيد اسمك هيتسجّل بيه على الموقع كله، <b>ومش هتقدر تغيره</b>، ومحدش تاني هيقدر يختار الكارت ده.</p>
+        <p>انت صاحب الكارت ده؟ بعد التأكيد اسمك هيتسجّل بيه على الموقع كله، <b>ومش هتقدر تغيره ولا تختار كارت تاني</b>، ومحدش تاني هيقدر يختار الكارت ده.</p>
         <p class="sm-error" id="sm-error" role="alert" hidden></p>
         <div class="sm-actions">
           <button type="button" class="sm-btn sm-btn-primary" data-act="do-claim">أيوه، ده أنا</button>
@@ -564,6 +582,7 @@
     else if (act === 'claim-here') showConfirm(modal.idx);
     else if (act === 'confirm') showConfirm(Number(btn.dataset.idx));
     else if (act === 'do-claim') doClaim(btn);
+    else if (act === 'my-card') { const i = ids.indexOf(me); if (i >= 0) openModal(i); }
   });
 
   document.addEventListener('keydown', (e) => {
@@ -591,6 +610,26 @@
       hint.textContent = 'اضغط على أي كارت علشان تبعتله رسالة 💌 — وقبل ما تبعت لازم تسجّل كارتك (مرة واحدة بس).';
     }
   }
+
+  /* ---------------- خانة "اختار كارتك" في الهيدر ---------------- */
+  (function headerPick() {
+    const nav = document.getElementById('site-nav');
+    const navToggle = document.getElementById('nav-toggle');
+    if (!nav) return;
+    const a = document.createElement('a');
+    a.href = '#pick-card';
+    a.className = 'nav-pick';
+    a.textContent = 'اختار كارتك';
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      nav.classList.remove('open');
+      if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+      const i = profile ? ids.indexOf(me) : -1;
+      openModal(i >= 0 ? i : null);
+    });
+    nav.appendChild(a);
+    headerPickLink = a;
+  })();
 
   /* ---------------- سطر التوقيع (اسم مقفول) ---------------- */
   function refreshSignLines() {
