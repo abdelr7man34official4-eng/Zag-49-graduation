@@ -1,7 +1,7 @@
 /* Service Worker — دفعة 49
    الهدف: أول زيارة عادية، وكل زيارة بعدها بتفتح فوراً من الكاش.
    لو غيرت أي ملف، غيّر رقم VERSION تحت عشان الزوار ياخدوا النسخة الجديدة. */
-const VERSION = 'v8';
+const VERSION = 'v9';
 const CORE = `core-${VERSION}`;
 const RUNTIME = `runtime-${VERSION}`;
 

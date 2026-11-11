@@ -338,8 +338,7 @@
     } else if (profile) {
       claimHtml = `<p>انت مسجّل باسم <b>${esc(profile.name)}</b>.</p>`;
     } else {
-      claimHtml = `<p>ده كارتك؟ سجّل كارتك علشان تقدر تبعت رسايل وتكتب ذكريات.</p>
-        <div id="sm-claim-slot"><button type="button" class="sm-link" data-act="claim-here">آه، ده كارتي</button></div>`;
+      claimHtml = '<p>علشان تبعت رسايل وتكتب ذكريات سجّل كارتك من خانة <b>«اختار كارتك»</b> فوق في القايمة.</p>';
     }
     setView('menu', `
       <div class="sm-actions">
@@ -352,17 +351,6 @@
       </div>
       ${mine ? '' : '<p class="sm-note sm-private">🔒 الرسائل اللي وصلت للكارت ده خاصة بصاحبه بس.</p>'}
       <div class="sm-claim">${claimHtml}</div>`);
-
-    // لو الكارت ده متسجّل لحد تاني نقول كده بدل زرار التسجيل
-    if (!profile) {
-      const sid = modal.sid;
-      getBackend().then((b) => b.getClaim(sid)).then((claim) => {
-        const slot = $('#sm-claim-slot', bodyEl);
-        if (claim && slot && modal.sid === sid && modal.view === 'menu') {
-          slot.innerHTML = '<p class="sm-taken">🔒 الكارت ده متسجّل بالفعل لصاحبه.</p>';
-        }
-      }).catch(() => {});
-    }
   }
 
   /* --- اختيار الكارت (بحث بالاسم) --- */
@@ -579,7 +567,6 @@
     else if (act === 'menu') showMenu();
     else if (act === 'close') closeModal();
     else if (act === 'pick') showPick();
-    else if (act === 'claim-here') showConfirm(modal.idx);
     else if (act === 'confirm') showConfirm(Number(btn.dataset.idx));
     else if (act === 'do-claim') doClaim(btn);
     else if (act === 'my-card') { const i = ids.indexOf(me); if (i >= 0) openModal(i); }
